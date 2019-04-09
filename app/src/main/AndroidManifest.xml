@@ -21,14 +21,19 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.IntentService"/>
+        <service
+                android:name=".service.ForegroundService"
+                android:exported="true"/>
+
+        <service
+                android:name=".service.FamiliadaIntentService"
+                android:exported="true"/>
 
         <receiver
                 android:name=".broadcast.ManifestDeclaredBroadcastReceiver"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.AIRPLANE_MODE"/>
             </intent-filter>
         </receiver>
 
