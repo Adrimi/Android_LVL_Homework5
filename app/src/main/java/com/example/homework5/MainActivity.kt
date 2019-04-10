@@ -8,9 +8,11 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.example.homework5.broadcast.ManifestDeclaredBroadcastReceiver
 import com.example.homework5.service.FamiliadaIntentService
+import com.example.homework5.service.ForegroundService
 import com.example.homework5.utilities.NotificationFactory
 import com.example.homework5.utilities.fromAndroid
 import com.example.homework5.work.OrdinaryWorker
@@ -24,8 +26,8 @@ class MainActivity : AppCompatActivity() {
         get() = getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val calendar: Calendar = Calendar.getInstance().apply {
         timeInMillis = System.currentTimeMillis()
-        set(Calendar.HOUR_OF_DAY, 21)
-        set(Calendar.MINUTE, 10)
+        set(Calendar.HOUR_OF_DAY, 9)
+        set(Calendar.MINUTE, 26)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private fun launchNotify2() {
         Intent(this, FamiliadaIntentService::class.java)
             .apply { action = "com.example.homework5.NOTIFY" }
-            .let { PendingIntent.get(this, 0, it, 0) }
+            .let { PendingIntent.getService(this, 0, it, 0) }
             .let {
                 alarmManager.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
@@ -50,6 +52,9 @@ class MainActivity : AppCompatActivity() {
                     it
                 )
             }
+        // Artificial lalunching service, to test that it's working.
+        // Unfortunately, it don't want to launch at exact time :/
+//        startService(Intent(this, FamiliadaIntentService::class.java))
     }
 
     private fun launchNotify3() {
@@ -66,11 +71,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun launchNotify4() {
         // start Foreground
+        ContextCompat.startForegroundService(this, Intent(this, ForegroundService::class.java))
     }
 
 
     private fun stopForegroundProcess() {
         // stop foreground
+        stopService(Intent(this, ForegroundService::class.java))
     }
 
     private fun initNotificationChannels() {
